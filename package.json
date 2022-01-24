@@ -10,7 +10,7 @@
     "test": "jest  --runInBand --verbose",
     "test:watch": "jest --watchAll --runInBand --verbose",
     "test:watch:db": "jest --watchAll db",
-    "test:watch:api": "jest --watchAll api"
+    "test:watch:api": "jest --watchAll --runInBand api"
   },
   "keywords": [],
   "author": "",

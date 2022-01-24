@@ -1,27 +1,40 @@
-// Use the dotenv package, to create environment variables
-
 // Create a constant variable, PORT, based on what's in process.env.PORT or fallback to 3000
+const express = require("express");
+const server = express();
+const PORT = 3000;
+const morgan = require("morgan");
+const cors = require("cors");
 
-// Import express, and create a server
+server.use(morgan("dev"));
+server.use(cors());
+server.use(express.json());
 
-// Require morgan and body-parser middleware
+const apiRouter = require("./api");
+server.use("/api", apiRouter);
 
-// Have the server use morgan with setting 'dev'
+const { client } = require("/db");
 
-// Import cors 
-// Have the server use cors()
+server.use("*", (_, res, next) => {
+  try {
+    res.send(`<h1>404 Not Found</h1>`);
+  } catch (err) {
+    next(err);
+  }
+});
 
-// Have the server use bodyParser.json()
+server.use((err, req, res, next) => {
+  err.status = 500;
+  next(err);
+});
 
-// Have the server use your api router with prefix '/api'
+const handle = server.listen(PORT, async () => {
+  try {
+    await client.connect();
+  } catch (err) {
+    console.error(err);
+    await client.end();
+    throw err;
+  }
+});
 
-// Import the client from your db/index.js
-
-// Create custom 404 handler that sets the status code to 404.
-
-// Create custom error handling that sets the status code to 500
-// and returns the error as an object
-
-
-// Start the server listening on port PORT
-// On success, connect to the database
+module.exports = { handle };
